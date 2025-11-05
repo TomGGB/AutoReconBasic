@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoRecon - Bug Bounty Reconnaissance</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="20" cy="20" r="18" stroke="#00d4ff" stroke-width="2"/>
+                    <path d="M20 10L25 20L20 30L15 20Z" fill="#00d4ff"/>
+                </svg>
+                <h1>AutoRecon</h1>
+            </div>
+            <p class="subtitle">Automated Bug Bounty Reconnaissance</p>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Input Section -->
+            <section class="input-section">
+                <div class="input-container">
+                    <label for="domain">Target Domain</label>
+                    <input
+                        type="text"
+                        id="domain"
+                        placeholder="example.com"
+                        autocomplete="off"
+                    >
+                </div>
+                <button id="startBtn" class="btn-primary">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5 3L19 12L5 21V3Z" fill="currentColor"/>
+                    </svg>
+                    Start Reconnaissance
+                </button>
+            </section>
+
+            <!-- Status Section -->
+            <section id="statusSection" class="status-section hidden">
+                <h2>Status</h2>
+                <div id="statusContent" class="status-content">
+                    <div class="status-item">
+                        <div class="status-icon loading"></div>
+                        <span>Initializing...</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Progress Section -->
+            <section id="progressSection" class="progress-section hidden">
+                <h2>Progress</h2>
+                <div class="phases">
+                    <div class="phase" data-phase="1">
+                        <div class="phase-icon">1</div>
+                        <div class="phase-info">
+                            <h3>Subdomain Enumeration</h3>
+                            <p>Discovering subdomains...</p>
+                        </div>
+                    </div>
+                    <div class="phase" data-phase="2">
+                        <div class="phase-icon">2</div>
+                        <div class="phase-info">
+                            <h3>Live Host Detection</h3>
+                            <p>Probing alive hosts...</p>
+                        </div>
+                    </div>
+                    <div class="phase" data-phase="3">
+                        <div class="phase-icon">3</div>
+                        <div class="phase-info">
+                            <h3>JavaScript Extraction</h3>
+                            <p>Crawling for JS files...</p>
+                        </div>
+                    </div>
+                    <div class="phase" data-phase="4">
+                        <div class="phase-icon">4</div>
+                        <div class="phase-info">
+                            <h3>Wayback Enumeration</h3>
+                            <p>Fetching historical data...</p>
+                        </div>
+                    </div>
+                    <div class="phase" data-phase="5">
+                        <div class="phase-icon">5</div>
+                        <div class="phase-info">
+                            <h3>Vulnerability Scanning</h3>
+                            <p>Running security scans...</p>
+                        </div>
+                    </div>
+                    <div class="phase" data-phase="6">
+                        <div class="phase-icon">6</div>
+                        <div class="phase-info">
+                            <h3>Report Generation</h3>
+                            <p>Creating final report...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section id="resultsSection" class="results-section hidden">
+                <h2>Resultados</h2>
+                <p class="results-hint">💡 Haz clic en cualquier tarjeta para ver los detalles</p>
+                <div class="stats-grid">
+                    <div class="stat-card clickable" data-type="subdomains">
+                        <div class="stat-value" id="totalSubs">0</div>
+                        <div class="stat-label">Total Subdominios</div>
+                        <div class="stat-hint">Click para ver lista</div>
+                    </div>
+                    <div class="stat-card clickable" data-type="critical">
+                        <div class="stat-value" id="criticalSubs">0</div>
+                        <div class="stat-label">Subdominios Críticos</div>
+                        <div class="stat-hint">Click para ver lista</div>
+                    </div>
+                    <div class="stat-card clickable" data-type="alive">
+                        <div class="stat-value" id="aliveHosts">0</div>
+                        <div class="stat-label">Hosts Vivos</div>
+                        <div class="stat-hint">Click para ver lista</div>
+                    </div>
+                    <div class="stat-card clickable" data-type="js">
+                        <div class="stat-value" id="jsFiles">0</div>
+                        <div class="stat-label">Archivos JS</div>
+                        <div class="stat-hint">Click para ver lista</div>
+                    </div>
+                    <div class="stat-card clickable" data-type="wayback">
+                        <div class="stat-value" id="waybackUrls">0</div>
+                        <div class="stat-label">URLs Wayback</div>
+                        <div class="stat-hint">Click para ver lista</div>
+                    </div>
+                    <div class="stat-card clickable" data-type="api">
+                        <div class="stat-value" id="apiEndpoints">0</div>
+                        <div class="stat-label">Endpoints API</div>
+                        <div class="stat-hint">Click para ver lista</div>
+                    </div>
+                </div>
+
+                <div class="vuln-section">
+                    <h3>Vulnerabilidades Encontradas</h3>
+                    <div class="vuln-grid">
+                        <div class="vuln-card critical clickable" data-type="takeovers">
+                            <div class="vuln-count" id="takeovers">0</div>
+                            <div class="vuln-label">Subdomain Takeovers</div>
+                            <div class="stat-hint">Click para ver detalles</div>
+                        </div>
+                        <div class="vuln-card high clickable" data-type="cves">
+                            <div class="vuln-count" id="cves">0</div>
+                            <div class="vuln-label">CVEs</div>
+                            <div class="stat-hint">Click para ver detalles</div>
+                        </div>
+                        <div class="vuln-card medium clickable" data-type="exposures">
+                            <div class="vuln-count" id="exposures">0</div>
+                            <div class="vuln-label">Exposures</div>
+                            <div class="stat-hint">Click para ver detalles</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="report-info">
+                    <p id="reportPath"></p>
+                    <button id="viewReportBtn" class="btn-secondary">Ver Reporte Completo</button>
+                </div>
+            </section>
+
+            <!-- Log Section -->
+            <section id="logSection" class="log-section hidden">
+                <h2>Salida en Vivo</h2>
+                <div id="logContent" class="log-content"></div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal for details -->
+    <div id="detailsModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle"></h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-search">
+                    <input type="text" id="modalSearch" placeholder="Buscar...">
+                </div>
+                <div id="modalData" class="modal-data"></div>
+            </div>
+            <div class="modal-footer">
+                <button id="modalCopy" class="btn-secondary">Copiar Todo</button>
+                <button id="modalDownload" class="btn-secondary">Descargar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
